@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Classificador de Emails</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #111;
+      transition: all 0.3s;
+    }
+
+    body.dark {
+      background: #111827;
+      color: #e5e7eb;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    body.dark .container {
+      background: #1f2937;
+    }
+
+    textarea {
+      width: 97%;
+      height: 130px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      background: inherit;
+      color: inherit;
+      resize: none;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px 16px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .toggle {
+      float: right;
+      background: #6b7280;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #eef2ff;
+    }
+
+    body.dark .result {
+      background: #374151;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    .Produtivo { color: #16a34a; }
+    .Improdutivo { color: #dc2626; }
+    .Urgente { color: #eab308; }
+    .Spam { color: #9333ea; }
+
+    .loader {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 5px solid rgba(99, 102, 241, 0.3);
+      border-top: 5px solid #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+  </style>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem(
+        "theme",
+        document.body.classList.contains("dark") ? "dark" : "light"
+      );
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+      }
+    };
+    function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem(
+      "theme",
+      document.body.classList.contains("dark") ? "dark" : "light"
+    );
+  }
+
+  function showLoader() {
+    document.getElementById("loader").style.display = "block";
+  }
+
+  window.onload = () => {
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+    }
+  };
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <button class="toggle" onclick="toggleTheme()">Modo noturno</button>
+
+    <h1>Classificador de Emails</h1>
+
+    <form method="POST" enctype="multipart/form-data" onsubmit="showLoader()">
+      <textarea name="email_text" placeholder="Cole o texto do email aqui..."></textarea>
+
+      <br><br>
+      <input type="file" name="email_file" accept=".txt,.pdf">
+
+      <br>
+      <button type="submit">Classificar</button>
+    </form>
+    <div class="loader" id="loader">
+      <div class="spinner"></div>
+      <p>Classificando email...</p>
+    </div>
+
+    {% if error %}
+      <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    {% if result %}
+      <div class="result">
+        <div class="label {{ result.label }}">
+          Classificação: {{ result.label }}
+        </div>
+      
+        <p><strong>Email:</strong></p>
+        <pre>{{ result.text }}</pre>
+      
+        <p><strong>Resposta sugerida:</strong></p>
+        <p>{{ result.response }}</p>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
